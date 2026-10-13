@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ג'פרדי בחירות 2026: בוחרים לדעת!</title>
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0d2b45;
+      --accent: #ffaa00;
+      --accent-hover: #ffbb33;
+      --board-blue: #0b1d3a;
+      --card-blue: #163868;
+      --card-hover: #225294;
+      --text-gold: #ffd166;
+      --danger: #ef476f;
+      --success: #06d6a0;
+      --bg: #071326;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Assistant', sans-serif;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Screen Management */
+    .screen {
+      display: none;
+      min-height: 100vh;
+      width: 100%;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .screen.active {
+      display: flex;
+    }
+
+    /* Buttons */
+    .btn {
+      background: var(--accent);
+      color: var(--primary);
+      border: none;
+      padding: 14px 32px;
+      font-size: 1.25rem;
+      font-weight: 800;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(255, 170, 0, 0.4);
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+    .btn:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 170, 0, 0.6);
+    }
+    .btn-secondary {
+      background: #2a4365;
+      color: #fff;
+      box-shadow: none;
+    }
+    .btn-secondary:hover {
+      background: #3b5a82;
+      box-shadow: none;
+    }
+
+    /* Splash Screen */
+    #splash-screen {
+      background: radial-gradient(circle at center, #1b3a60 0%, #06101e 100%);
+      cursor: pointer;
+      text-align: center;
+    }
+    .splash-title {
+      font-size: 4rem;
+      font-weight: 800;
+      color: var(--accent);
+      text-shadow: 0 4px 20px rgba(0,0,0,0.8);
+      margin-bottom: 15px;
+    }
+    .splash-subtitle {
+      font-size: 1.8rem;
+      color: #e2e8f0;
+      margin-bottom: 40px;
+      font-weight: 600;
+    }
+    .pulse-text {
+      font-size: 1.3rem;
+      color: #cbd5e1;
+      animation: pulse 1.8s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; transform: scale(0.98); }
+      50% { opacity: 1; transform: scale(1.02); }
+    }
+
+    /* Rules Screen */
+    #rules-screen {
+      background: #09172c;
+    }
+    .rules-card {
+      background: #102646;
+      border: 2px solid #234372;
+      border-radius: 20px;
+      max-width: 750px;
+      width: 100%;
+      padding: 40px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .rules-card h2 {
+      font-size: 2.3rem;
+      color: var(--accent);
+      margin-bottom: 25px;
+      text-align: center;
+    }
+    .rule-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+      margin-bottom: 20px;
+      font-size: 1.25rem;
+      line-height: 1.6;
+    }
+    .rule-number {
+      background: var(--accent);
+      color: var(--primary);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    /* Lobby Screen */
+    #lobby-screen {
+      background: #0a1931;
+    }
+    .lobby-card {
+      background: #11284a;
+      border-radius: 20px;
+      max-width: 700px;
+      width: 100%;
+      padding: 35px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    }
+    .form-group {
+      margin-bottom: 25px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .form-control {
+      width: 100%;
+      padding: 12px 18px;
+      border-radius: 10px;
+      border: 1px solid #2e4d7a;
+      background: #091629;
+      color: #fff;
+      font-size: 1.1rem;
+    }
+    .team-inputs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    /* Game Screen */
+    #game-screen {
+      padding: 15px;
+      justify-content: flex-start;
+      gap: 15px;
+    }
+    .game-header {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 15px;
+    }
+    .board-container {
+      width: 100%;
+      max-width: 1400px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .board-grid {
+      display: grid;
+      gap: 10px;
+      width: 100%;
+    }
+    .category-card {
+      background: #0d2446;
+      border: 2px solid #1e457e;
+      border-radius: 8px;
+      padding: 12px 6px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 70px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+    }
+    .clue-cell {
+      background: var(--card-blue);
+      border: 2px solid #244e87;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--text-gold);
+      min-height: 80px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .clue-cell:hover:not(.disabled) {
+      background: var(--card-hover);
+      transform: scale(1.02);
+      border-color: var(--accent);
+    }
+    .clue-cell.disabled {
+      background: #081628;
+      border-color: #10243d;
+      color: transparent;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    /* Scoreboard */
+    .scoreboard {
+      width: 100%;
+      max-width: 1400px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .team-score-card {
+      background: #11294d;
+      border: 2px solid #224b82;
+      border-radius: 12px;
+      padding: 10px;
+      text-align: center;
+    }
+    .team-name-editable {
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #e2e8f0;
+      outline: none;
+      margin-bottom: 5px;
+      border-bottom: 1px dashed transparent;
+    }
+    .team-name-editable:focus {
+      border-bottom: 1px dashed var(--accent);
+    }
+    .score-value {
+      font-size: 1.7rem;
+      font-weight: 800;
+      color: var(--accent);
+      margin-bottom: 5px;
+    }
+    .score-controls {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+    }
+    .score-btn {
+      background: #1e457e;
+      border: none;
+      color: #fff;
+      font-weight: 700;
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1.1rem;
+    }
+    .score-btn:hover {
+      background: #2b5ca5;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(4, 11, 22, 0.9);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 1000;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal-content {
+      background: #0f274a;
+      border: 3px solid #ffaa00;
+      border-radius: 20px;
+      max-width: 850px;
+      width: 100%;
+      padding: 35px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    }
+    .modal-header-meta {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .modal-category {
+      font-size: 1.4rem;
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .timer-badge {
+      background: #193863;
+      border: 2px solid #2d5a99;
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.7rem;
+      font-weight: 800;
+      color: #fff;
+    }
+    .timer-badge.danger {
+      background: var(--danger);
+      border-color: #ff7597;
+      animation: pulse 0.5s infinite;
+    }
+    .clue-text {
+      font-size: 2rem;
+      line-height: 1.5;
+      font-weight: 600;
+      margin: 25px 0;
+      color: #ffffff;
+    }
+    .daily-double-banner {
+      background: linear-gradient(90deg, #ff9900, #ffdd00);
+      color: #0b1a2f;
+      padding: 8px 25px;
+      border-radius: 30px;
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      box-shadow: 0 4px 15px rgba(255, 170, 0, 0.5);
+    }
+    .answer-box {
+      background: #08172c;
+      border: 2px solid #20457a;
+      border-radius: 12px;
+      padding: 20px;
+      width: 100%;
+      margin: 15px 0;
+      display: none;
+    }
+    .answer-box.active {
+      display: block;
+    }
+    .answer-label {
+      font-size: 1rem;
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .answer-text {
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--success);
+    }
+    .modal-footer {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+      width: 100%;
+      justify-content: center;
+    }
+
+    /* Floating Rules Button */
+    .floating-rules-btn {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: #173868;
+      border: 2px solid #2b5ca5;
+      color: #fff;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      z-index: 100;
+    }
+    .floating-rules-btn:hover {
+      background: #255494;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- מסך שער (Splash) -->
+  <div id="splash-screen" class="screen active" onclick="showScreen('rules-screen')">
+    <div class="splash-title">ג'פרדי בחירות 2026</div>
+    <div class="splash-subtitle">בוחרים לדעת! משחק טריוויה פוליטי-אזרחי לתיכון</div>
+    <div class="pulse-text">לחצו בכל מקום להתחלת המשחק</div>
+  </div>
+
+  <!-- מסך כללים (Rules) -->
+  <div id="rules-screen" class="screen">
+    <div class="rules-card">
+      <h2>חוקי המשחק</h2>
+      <div class="rule-item">
+        <div class="rule-number">1</div>
+        <div><strong>זכות דיבור בלעדית:</strong> רק הקבוצה שבחרה את השאלה רשאית לענות תוך 10 שניות מהצגת הרמז.</div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-number">2</div>
+        <div><strong>חובת ניסוח כשאלה:</strong> התשובה חייבת להינתן כשאלה בלבד! למשל: <em>"מי הוא יצחק הרצוג?"</em> או <em>"מהו אחוז החסימה?"</em>.</div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-number">3</div>
+        <div><strong>שאלת Daily Double:</strong> שאלה אחת בלוח מסתירה הכפלת ניקוד! הקבוצה שבחרה בה זוכה לניקוד כפול עבור תשובה נכונה.</div>
+      </div>
+      <div style="text-align: center; margin-top: 30px;">
+        <button class="btn" onclick="showScreen('lobby-screen')">המשך להגדרות המשחק</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- מסך הגדרות ולובי (Lobby) -->
+  <div id="lobby-screen" class="screen">
+    <div class="lobby-card">
+      <h2 style="font-size: 2rem; color: var(--accent); margin-bottom: 25px; text-align: center;">הגדרת המשחק</h2>
+      <div class="form-group">
+        <label for="theme-select">נושא המשחק:</label>
+        <select id="theme-select" class="form-control">
+          <!-- נטען אוטומטית מתוך המערך -->
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="board-size-select">גודל הלוח (קטגוריות × שאלות):</label>
+        <select id="board-size-select" class="form-control">
+          <option value="6x6" selected>6 קטגוריות × 6 שאלות (מלא - 100 עד 600)</option>
+          <option value="6x5">6 קטגוריות × 5 שאלות (100 עד 500)</option>
+          <option value="5x4">5 קטגוריות × 4 שאלות</option>
+          <option value="4x4">4 קטגוריות × 4 שאלות</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="team-count">מספר סיעות / קבוצות מתמודדות:</label>
+        <select id="team-count" class="form-control" onchange="generateTeamInputs()">
+          <option value="1">1 קבוצה</option>
+          <option value="2">2 קבוצות</option>
+          <option value="3" selected>3 קבוצות</option>
+          <option value="4">4 קבוצות</option>
+          <option value="5">5 קבוצות</option>
+          <option value="6">6 קבוצות</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>שמות הסיעות:</label>
+        <div id="team-inputs-container" class="team-inputs-grid"></div>
+      </div>
+      <div style="text-align: center; margin-top: 30px;">
+        <button class="btn" onclick="startGame()">עלייה לקלפי (התחל משחק)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- מסך משחק (Game) -->
+  <div id="game-screen" class="screen">
+    <div class="game-header">
+      <h1 style="font-size: 1.6rem; color: var(--accent); font-weight: 800;">ג'פרדי בחירות 2026</h1>
+      <button class="btn btn-secondary" style="padding: 8px 18px; font-size: 0.95rem;" onclick="showScreen('lobby-screen')">חזרה ללובי</button>
+    </div>
+
+    <div class="board-container">
+      <div id="board-grid" class="board-grid"></div>
+    </div>
+
+    <!-- לוח תוצאות -->
+    <div id="scoreboard" class="scoreboard"></div>
+  </div>
+
+  <!-- מודאל שאלה וטיימר -->
+  <div id="clue-modal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header-meta">
+        <div id="modal-category" class="modal-category">שם הקטגוריה</div>
+        <div id="timer-badge" class="timer-badge">10</div>
+      </div>
+
+      <div id="daily-double-badge" class="daily-double-banner" style="display: none;">הימור כפול! (Daily Double)</div>
+
+      <div id="modal-clue" class="clue-text">תוכן הרמז יוצג כאן</div>
+
+      <div id="modal-answer-box" class="answer-box">
+        <div class="answer-label">השאלה הנכונה:</div>
+        <div id="modal-answer" class="answer-text">התשובה כאן</div>
+      </div>
+
+      <div class="modal-footer">
+        <button id="show-answer-btn" class="btn" onclick="revealAnswer()">חשוף תשובה</button>
+        <button id="close-modal-btn" class="btn btn-secondary" style="display: none;" onclick="closeModal()">סגור וחזור ללוח</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- כפתור תזכורת כללים צף -->
+  <button class="floating-rules-btn" title="כללי המשחק" onclick="alert('כללי המשחק:\n1. 10 שניות בלבד לקבוצה שבחרה לענות.\n2. חובה לענות כשאלה (מהו/מי הוא/וכו\').\n3. Daily Double מעניק ניקוד כפול!')">?</button>
+
+  <script>
+    // מאגר הנושאים והשאלות המובנה
+    const BUILTIN_TOPICS = [
+      {
+        "topic": "בחירות בישראל 2026",
+        "categories": [
+          {
+            "name": "מאחורי הפרגוד (ההצבעה בקלפי)",
+            "questions": [
+              {
+                "value": 100,
+                "clue": "אלו המסמכים המזהים העיקריים שאיתם מגיע הבוחר לוועדת הקלפי כדי לקבל מעטפת הצבעה.",
+                "answer": "מהם תעודת זהות, דרכון ישראלי, רישיון נהיגה או תעודת חוגר?",
+                "is_daily_double": false
+              },
+              {
+                "value": 200,
+                "clue": "השעה המדויקת בבוקר יום הבחירות שבה נפתחות דלתות רוב הקלפיות ברחבי ישראל.",
+                "answer": "מהי השעה 07:00?",
+                "is_daily_double": false
+              },
+              {
+                "value": 300,
+                "clue": "המספר המרבי של פתקים זהים לחלוטין של אותה רשימה שמותר להכניס למעטפה אחת בלי לפסול את ההצבעה (נספרים כקול כשר יחיד).",
+                "answer": "מהו 3 פתקים?",
+                "is_daily_double": false
+              },
+              {
+                "value": 400,
+                "clue": "המעטפה הזו משמשת חיילים, שוטרים, מאושפזים בבתי חולים ואסירים המצביעים מחוץ למקום מגוריהם.",
+                "answer": "מהי מעטפה כפולה?",
+                "is_daily_double": false
+              },
+              {
+                "value": 500,
+                "clue": "כותבים עליו בעט את אותיות הרשימה רק כאשר הפתקים המודפסים של המפלגה אזלו בקלפי.",
+                "answer": "מהו פתק הצבעה ריק (פתק לבן)?",
+                "is_daily_double": false
+              },
+              {
+                "value": 600,
+                "clue": "השעה המדויקת ביום הבחירות שבה נסגרות רוב הקלפיות ברחבי הארץ ומתחילה ספירת הקולות.",
+                "answer": "מהי השעה 22:00?",
+                "is_daily_double": false
+              }
+            ]
+          },
+          {
+            "name": "הכל נמצא במספרים",
+            "questions": [
+              {
+                "value": 100,
+                "clue": "מספר חברי הכנסת המרבי שנבחרים בכל מערכת בחירות לכנסת.",
+                "answer": "מהו 120?",
+                "is_daily_double": false
+              },
+              {
+                "value": 200,
+                "clue": "הגיל המינימלי שמקנה לאזרח ישראלי את הזכות לבחור לכנסת.",
+                "answer": "מהו גיל 18?",
+                "is_daily_double": false
+              },
+              {
+                "value": 300,
+                "clue": "היום בשבוע שבו מתקיימות הבחירות לכנסת לפי החוק (מלבד מקרים חריגים ביותר).",
+                "answer": "מהו יום שלישי?",
+                "is_daily_double": false
+              },
+              {
+                "value": 400,
+                "clue": "הגיל המינימלי הנדרש מאזרח ישראלי כדי שיוכל להיבחר כחבר כנסת.",
+                "answer": "מהו גיל 21?",
+                "is_daily_double": false
+              },
+              {
+                "value": 500,
+                "clue": "אחוז הקולות המינימלי מכלל הקולות הכשרים שמפלגה חייבת לקבל כדי להיכנס לכנסת (עומד כיום על 3.25%).",
+                "answer": "מהו אחוז החסימה?",
+                "is_daily_double": false
+              },
+              {
+                "value": 600,
+                "clue": "ההסכם שנחתם בין שתי מפלגות לפני הבחירות במטרה לחלק ביניהן קולות עודפים שנותרו לאחר חלוקת המנדטים הראשונית.",
+                "answer": "מהו הסכם עודפים (הסכם בדר-עופר)?",
+                "is_daily_double": true
+              }
+            ]
+          },
+          {
+            "name": "אותיות על הפתק",
+            "questions": [
+              {
+                "value": 100,
+                "clue": "האותיות שמופיעות על פתק ההצבעה של מפלגת ש\"ס.",
+                "answer": "מהן שס?",
+                "is_daily_double": false
+              },
+              {
+                "value": 200,
+                "clue": "האותיות שמופיעות על פתק ההצבעה של מפלגת הליכוד.",
+                "answer": "מהן מחל?",
+                "is_daily_double": false
+              },
+              {
+                "value": 300,
+                "clue": "האותיות שמופיעות על פתק ההצבעה של מפלגת \"הדמוקרטים\" (איחוד העבודה ומרצ).",
+                "answer": "מהן אמת?",
+                "is_daily_double": false
+              },
+              {
+                "value": 400,
+                "clue": "האות שמופיעה על פתק ההצבעה של מפלגת יהדות התורה.",
+                "answer": "מהי ג?",
+                "is_daily_double": false
+              },
+              {
+                "value": 500,
+                "clue": "האות שמופיעה על פתק ההצבעה של מפלגת הציונות הדתית בראשות בצלאל סמוטריץ'.",
+                "answer": "מהי ט?",
+                "is_daily_double": false
+              },
+              {
+                "value": 600,
+                "clue": "האות שמופיעה על פתק ההצבעה של מפלגת \"עמך ישראל\" בראשות תא\"ל (במיל') עופר וינטר.",
+                "answer": "מהי ך?",
+                "is_daily_double": false
+              }
+            ]
+          },
+          {
+            "name": "מי אמר את זה? (ציטוטים מוכרים)",
+            "questions": [
+              {
+                "value": 100,
+                "clue": "השר וחבר הכנסת מהליכוד שטבע את המשפט המפורסם והשנוי במחלוקת: \"בפוליטיקה פועלים לפי שלושת הכ\"פים: כוח, כבוד וכסף\".",
+                "answer": "מי הוא מיקי זוהר?",
+                "is_daily_double": false
+              },
+              {
+                "value": 200,
+                "clue": "המנהיג הפוליטי שאמר בשידור ישיר ביום הבחירות 2015: \"שלטון הימין בסכנה. המצביעים הערבים נעים בכמויות אדירות לקלפי\".",
+                "answer": "מי הוא בנימין נתניהו?",
+                "is_daily_double": false
+              },
+              {
+                "value": 300,
+                "clue": "שר האוצר לשעבר שהתפרסם עם הסיסמה הקצרה והתקיפה בקמפיין הבחירות: \"בלי נאמנות – אין אזרחות\".",
+                "answer": "מי הוא אביגדור ליברמן?",
+                "is_daily_double": false
+              },
+              {
+                "value": 400,
+                "clue": "השר שהפך את הסיסמה \"מי פה בעל הבית?!\" למוטיב המוביל בקמפיין הבחירות שלו.",
+                "answer": "מי הוא איתמר בן גביר?",
+                "is_daily_double": false
+              },
+              {
+                "value": 500,
+                "clue": "השר שהצהיר בריאיון טלוויזיוני מפורסם ב-2022 את המשפט השנוי במחלוקת: \"לא ראיתי שהמתמטיקה קידמה את המדינה בכלכלה\".",
+                "answer": "מי הוא יצחק גולדקנופף?",
+                "is_daily_double": false
+              },
+              {
+                "value": 600,
+                "clue": "הפוליטיקאי הוותיק ששאל את ועידת מפלגתו את השאלה שהפכה לקלאסיקה: \"אני שומע את החברים אומרים... אני לוזר?\".",
+                "answer": "מי הוא שמעון פרס?",
+                "is_daily_double": false
+              }
+            ]
+          },
+          {
+            "name": "שיאים ונצחונות",
+            "questions": [
+              {
+                "value": 100,
+                "clue": "האדם שכיהן במשך הזמן המצטבר הארוך ביותר בתולדות מדינת ישראל בתפקיד ראש הממשלה.",
+                "answer": "מי הוא בנימין נתניהו?",
+                "is_daily_double": false
+              },
+              {
+                "value": 200,
+                "clue": "האישה היחידה עד כה בתולדות מדינת ישראל שהובילה מפלגה לניצחון בבחירות וכיהנה כראש ממשלה.",
+                "answer": "מי היא גולדה מאיר?",
+                "is_daily_double": false
+              },
+              {
+                "value": 300,
+                "clue": "המפלגה שהחזיקה ברצף הניצחונות הארוך ביותר בישראל והובילה את הממשלה במשך 29 השנים הראשונות לקום המדינה (1948–1977).",
+                "answer": "מהי מפא\"י (או המערך / מפלגת העבודה)?",
+                "is_daily_double": false
+              },
+              {
+                "value": 400,
+                "clue": "הכינוי המוכר של מפלגת גיל בראשות רפי איתן, שהייתה הפתעת הבחירות הגדולה ב-2006 כשזינקה ל-7 מנדטים.",
+                "answer": "מהי מפלגת הגמלאים?",
+                "is_daily_double": false
+              },
+              {
+                "value": 500,
+                "clue": "המתמודד לראשות הממשלה שבבחירות לכנסת ה-20 (2015) הוביל בסקרים בערב הבחירות – והפסיד לבנימין נתניהו ביום הבחירות.",
+                "answer": "מי הוא יצחק (בוז'י) הרצוג?",
+                "is_daily_double": false
+              },
+              {
+                "value": 600,
+                "clue": "המועמד לראשות הממשלה שניצח את בנימין נתניהו בבחירות הישירות בשנת 1999.",
+                "answer": "מי הוא אהוד ברק?",
+                "is_daily_double": false
+              }
+            ]
+          },
+          {
+            "name": "מוסדות, תפקידים וסמכויות",
+            "questions": [
+              {
+                "value": 100,
+                "clue": "האישיות הממלכתית שמטילה את מלאכת הרכבת הממשלה על אחד מחברי הכנסת לאחר התייעצות עם כל הסיעות.",
+                "answer": "מי הוא נשיא המדינה?",
+                "is_daily_double": false
+              },
+              {
+                "value": 200,
+                "clue": "המקום הרשמי בירושלים שבו מתכנסים 120 הנבחרים, מחוקקים חוקים ומפקחים על הממשלה.",
+                "answer": "מהו משכן הכנסת?",
+                "is_daily_double": false
+              },
+              {
+                "value": 300,
+                "clue": "התפקיד השיפוטי של האדם שעומד בראש ועדת הבחירות המרכזית ומנהל אותה בפועל.",
+                "answer": "מי הוא שופט בית המשפט העליון?",
+                "is_daily_double": false
+              },
+              {
+                "value": 400,
+                "clue": "הסקר המיוחד שמפורסם בערוצי הטלוויזיה בדיוק בשעה 22:00 בערב הבחירות, המבוסס על קלפיות דמי מחוץ לקלפיות האמיתיות.",
+                "answer": "מהו מדגם הבחירות (מדגם הטלוויזיה)?",
+                "is_daily_double": false
+              },
+              {
+                "value": 500,
+                "clue": "פרק הזמן המרבי הראשוני שמעניק החוק לחבר כנסת שנבחר להרכיב ממשלה (לפני הארכה אפשרית של עד 14 יום).",
+                "answer": "מהו 28 ימים?",
+                "is_daily_double": false
+              },
+              {
+                "value": 600,
+                "clue": "הגוף הממלכתי האחראי על תכנון, ניהול, פיקוח ופרסום התוצאות הרשמיות של הבחירות לכנסת.",
+                "answer": "מהי ועדת הבחירות המרכזית?",
+                "is_daily_double": false
+              }
+            ]
+          }
+        ]
+      }
+    ];
+
+    // מנוע סאונד מובנה (Web Audio API)
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function playTick() {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.05);
+    }
+
+    function playBuzzer() {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+      osc.frequency.linearRampToValueAtTime(110, audioCtx.currentTime + 0.4);
+      gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.4);
+    }
+
+    // מצב המשחק
+    let currentTopic = null;
+    let teams = [];
+    let timerInterval = null;
+    let timeLeft = 10;
+    let activeCell = null;
+
+    // ניווט מסכים
+    function showScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(screenId).classList.add('active');
+    }
+
+    // אתחול נושאים ובחירת קבוצות
+    function initLobby() {
+      const themeSelect = document.getElementById('theme-select');
+      themeSelect.innerHTML = '';
+      BUILTIN_TOPICS.forEach((t, i) => {
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = t.topic;
+        themeSelect.appendChild(opt);
+      });
+      generateTeamInputs();
+    }
+
+    function generateTeamInputs() {
+      const count = parseInt(document.getElementById('team-count').value, 10);
+      const container = document.getElementById('team-inputs-container');
+      container.innerHTML = '';
+      const defaultNames = ["סיעת כחול-לבן", "סיעת הליכוד", "סיעת הדמוקרטים", "סיעת ש\"ס", "סיעת גשר", "סיעת הירוקים"];
+      for (let i = 0; i < count; i++) {
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'form-control';
+        input.value = defaultNames[i] || `קבוצה ${i+1}`;
+        input.id = `team-name-${i}`;
+        container.appendChild(input);
+      }
+    }
+
+    function startGame() {
+      const topicIndex = parseInt(document.getElementById('theme-select').value, 10);
+      currentTopic = BUILTIN_TOPICS[topicIndex];
+      
+      const teamCount = parseInt(document.getElementById('team-count').value, 10);
+      teams = [];
+      for (let i = 0; i < teamCount; i++) {
+        const name = document.getElementById(`team-name-${i}`).value.trim() || `קבוצה ${i+1}`;
+        teams.push({ name: name, score: 0 });
+      }
+
+      renderScoreboard();
+      renderBoard();
+      showScreen('game-screen');
+    }
+
+    function renderScoreboard() {
+      const scoreboard = document.getElementById('scoreboard');
+      scoreboard.innerHTML = '';
+      teams.forEach((team, idx) => {
+        const card = document.createElement('div');
+        card.className = 'team-score-card';
+        card.innerHTML = `
+          <div class="team-name-editable" contenteditable="true" onblur="updateTeamName(${idx}, this.innerText)">${team.name}</div>
+          <div class="score-value" id="score-val-${idx}">${team.score}</div>
+          <div class="score-controls">
+            <button class="score-btn" onclick="modifyScore(${idx}, 100)">+100</button>
+            <button class="score-btn" onclick="modifyScore(${idx}, -100)">-100</button>
+          </div>
+        `;
+        scoreboard.appendChild(card);
+      });
+    }
+
+    function updateTeamName(index, newName) {
+      if (teams[index]) {
+        teams[index].name = newName.trim() || `קבוצה ${index+1}`;
+      }
+    }
+
+    function modifyScore(index, delta) {
+      if (teams[index]) {
+        teams[index].score += delta;
+        document.getElementById(`score-val-${index}`).textContent = teams[index].score;
+      }
+    }
+
+    function renderBoard() {
+      const sizeMode = document.getElementById('board-size-select').value;
+      const [cols, rows] = sizeMode.split('x').map(Number);
+      const grid = document.getElementById('board-grid');
+      grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+      grid.innerHTML = '';
+
+      const categoriesToRender = currentTopic.categories.slice(0, cols);
+
+      // כותרות קטגוריות
+      categoriesToRender.forEach(cat => {
+        const catCard = document.createElement('div');
+        catCard.className = 'category-card';
+        catCard.textContent = cat.name;
+        grid.appendChild(catCard);
+      });
+
+      // משבצות שאלות לפי שורות
+      for (let r = 0; r < rows; r++) {
+        categoriesToRender.forEach(cat => {
+          const q = cat.questions[r];
+          const cell = document.createElement('div');
+          cell.className = 'clue-cell';
+          if (q) {
+            cell.textContent = q.value;
+            cell.onclick = () => openClue(cell, cat.name, q);
+          } else {
+            cell.classList.add('disabled');
+          }
+          grid.appendChild(cell);
+        });
+      }
+    }
+
+    function openClue(cellElement, catName, question) {
+      activeCell = cellElement;
+      document.getElementById('modal-category').textContent = `${catName} - ${question.value} נקודות`;
+      document.getElementById('modal-clue').textContent = question.clue;
+      document.getElementById('modal-answer').textContent = question.answer;
+
+      const ddBadge = document.getElementById('daily-double-badge');
+      if (question.is_daily_double) {
+        ddBadge.style.display = 'block';
+      } else {
+        ddBadge.style.display = 'none';
+      }
+
+      document.getElementById('modal-answer-box').classList.remove('active');
+      document.getElementById('show-answer-btn').style.display = 'inline-block';
+      document.getElementById('close-modal-btn').style.display = 'none';
+
+      // הפעלת טיימר 10 שניות
+      startTimer();
+
+      document.getElementById('clue-modal').classList.add('active');
+    }
+
+    function startTimer() {
+      clearInterval(timerInterval);
+      timeLeft = 10;
+      const badge = document.getElementById('timer-badge');
+      badge.textContent = timeLeft;
+      badge.classList.remove('danger');
+
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        badge.textContent = timeLeft;
+        playTick();
+
+        if (timeLeft <= 3) {
+          badge.classList.add('danger');
+        }
+
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          playBuzzer();
+        }
+      }, 1000);
+    }
+
+    function revealAnswer() {
+      clearInterval(timerInterval);
+      document.getElementById('modal-answer-box').classList.add('active');
+      document.getElementById('show-answer-btn').style.display = 'none';
+      document.getElementById('close-modal-btn').style.display = 'inline-block';
+    }
+
+    function closeModal() {
+      clearInterval(timerInterval);
+      document.getElementById('clue-modal').classList.remove('active');
+      if (activeCell) {
+        activeCell.classList.add('disabled');
+      }
+    }
+
+    // הפעלה בעליית הדף
+    window.onload = () => {
+      initLobby();
+    };
+  </script>
+</body>
+</html>
