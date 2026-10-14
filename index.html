@@ -34,6 +34,7 @@
       display: flex;
       flex-direction: column;
       overflow-x: hidden;
+      position: relative;
     }
 
     /* Screen Management */
@@ -44,7 +45,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 20px 20px 50px 20px;
     }
     .screen.active {
       display: flex;
@@ -187,7 +188,7 @@
 
     /* Game Screen */
     #game-screen {
-      padding: 15px;
+      padding: 15px 15px 50px 15px;
       justify-content: flex-start;
       gap: 15px;
     }
@@ -438,6 +439,22 @@
     .floating-rules-btn:hover {
       background: #255494;
     }
+
+    /* שורת זכויות יוצרים (Footer) */
+    .app-footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      padding: 6px 12px;
+      font-size: 0.85rem;
+      color: rgba(226, 232, 240, 0.6);
+      background: rgba(7, 19, 38, 0.85);
+      backdrop-filter: blur(4px);
+      z-index: 90;
+      letter-spacing: 0.5px;
+    }
   </style>
 </head>
 <body>
@@ -552,6 +569,11 @@
 
   <!-- כפתור תזכורת כללים צף -->
   <button class="floating-rules-btn" title="כללי המשחק" onclick="alert('כללי המשחק:\n1. 10 שניות בלבד לקבוצה שבחרה לענות.\n2. חובה לענות כשאלה (מהו/מי הוא/וכו\').\n3. Daily Double מעניק ניקוד כפול!')">?</button>
+
+  <!-- שורת זכויות יוצרים -->
+  <div class="app-footer">
+    כל הזכויות שמורות לאורן שפילמן &copy; 2026
+  </div>
 
   <script>
     // מאגר הנושאים והשאלות המובנה
